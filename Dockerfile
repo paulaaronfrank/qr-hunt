@@ -17,4 +17,6 @@ RUN pip install -r requirements.txt
 COPY . /usr/src/app/
 
 WORKDIR ./src
-CMD ["gunicorn", "--bind", "0.0.0.0:443", "wsgi:app"]
+COPY ./certificate.crt ./certificate.crt
+COPY ./private.key ./private.key
+CMD ["gunicorn", "--certfile", "./certificate.crt", "--keyfile", "./private.key", "-b", "0.0.0.0:8443", "wsgi:app"]
