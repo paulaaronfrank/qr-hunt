@@ -1,6 +1,7 @@
-from flask import Flask, send_from_directory, request, render_template, make_response, redirect, url_for
+from flask import Flask, send_from_directory, request, render_template, make_response, redirect, url_for, send_file
 from .utils import Config, create_qr_code
 from uuid import uuid4
+from io import BytesIO
 import os
 import jwt
 import pickle
@@ -45,8 +46,7 @@ def create_app():
 
     @app.route('/admin')
     def admin():
-        create_qr()
-        return 'Hello Admin!'
+        return create_qr()
 
     @app.route('/<qr_id>')
     def check_id(qr_id):
@@ -76,8 +76,11 @@ def list_qr(download=False):
 
 def create_qr():
     qr_id = str(uuid4())
-    create_qr_code(qr_id)
-    return 'QR Code Generated!'
+    qr_img = create_qr_code(qr_id)
+    img_io = BytesIO()
+    qr_img.save(img_io, 'PNG')
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/png')
 
 
 def check_qr(id):

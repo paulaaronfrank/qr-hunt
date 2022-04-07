@@ -26,3 +26,4 @@ def create_qr_code(qr_id):
            (qr_img.size[1] - icon.size[1]) // 2)
     qr_img.paste(icon, pos)
     qr_img.save(f'app/codes/{qr_id}.png')
+    return qr_img
