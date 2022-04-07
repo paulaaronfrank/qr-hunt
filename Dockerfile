@@ -17,4 +17,4 @@ RUN pip install -r requirements.txt
 COPY . /usr/src/app/
 
 WORKDIR ./src
-CMD ["gunicorn", "-b", "0.0.0.0:443", "wsgi:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:443", "wsgi:app"]
