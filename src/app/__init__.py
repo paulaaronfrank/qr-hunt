@@ -120,7 +120,7 @@ def create_app():
 
                 return render_template('score.html', name=decoded['name'], score=score)
             return 'Error'
-        return redirect('index')
+        return redirect(url_for('index'))
 
     return app
 
