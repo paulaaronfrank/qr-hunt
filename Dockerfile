@@ -19,4 +19,4 @@ COPY . /usr/src/app/
 WORKDIR ./src
 COPY ./certificate.crt ./certificate.crt
 COPY ./private.key ./private.key
-CMD ["gunicorn", "--certfile", "./certificate.crt", "--keyfile", "./private.key", "-b", "0.0.0.0:8443", "wsgi:app"]
+CMD ["gunicorn", "--certfile", "./certificate.crt", "--keyfile", "./private.key", "-b", "0.0.0.0:443", "wsgi:app"]
