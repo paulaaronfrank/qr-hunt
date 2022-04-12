@@ -26,7 +26,7 @@ def create_app():
             qr_id = request.args.get('code')
             qr_codes = [i.split('.')[0] for i in os.listdir(f'{os.getcwd()}/app/codes')]
             if qr_id in qr_codes:
-                data = pickle.dumps({'name': username, 'codes': set(qr_id)})
+                data = pickle.dumps({'name': username, 'codes': {qr_id}})
                 response = make_response(render_template('score.html', name=username, score=1))
             else:
                 data = pickle.dumps({'name': username, 'codes': set()})
