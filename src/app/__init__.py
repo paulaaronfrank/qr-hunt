@@ -23,11 +23,16 @@ def create_app():
             token = jwt.encode({'user_id': user_id, 'name': username},
                                Config.SECRET, algorithm='HS256')
 
-            data = pickle.dumps({'name': username, 'codes': set()})
+            qr_id = request.args.get('code')
+            qr_codes = [i.split('.')[0] for i in os.listdir(f'{os.getcwd()}/app/codes')]
+            if qr_id in qr_codes:
+                data = pickle.dumps({'name': username, 'codes': set(qr_id)})
+                response = make_response(render_template('score.html', name=username, score=1))
+            else:
+                data = pickle.dumps({'name': username, 'codes': set()})
+                response = make_response(render_template('score.html', name=username, score=0))
             with open(f'app/users/{user_id}.usr', 'wb') as fp:
                 fp.write(data)
-
-            response = make_response(render_template('score.html', name=username, score=0))
             response.set_cookie('user', token)
             return response
 
@@ -84,8 +89,8 @@ def create_app():
                 for _ in range(num):
                     qrs.append(create_qr())
                 return 'created'
-            img = create_qr()
-            return send_file(img, mimetype='image/png')
+            qr_id = create_qr()
+            return send_from_directory('codes', qr_id + '.png')
         if request.method == 'DELETE':
             for f in os.listdir('app/codes'):
                 if not f.endswith(".png"):
@@ -120,7 +125,7 @@ def create_app():
 
                 return render_template('score.html', name=decoded['name'], score=score)
             return 'Error'
-        return redirect(url_for('index'))
+        return redirect(url_for('index', code=qr_id))
 
     return app
 
@@ -135,4 +140,4 @@ def create_qr():
     img_io = BytesIO()
     qr_img.save(img_io, 'PNG')
     img_io.seek(0)
-    return img_io
+    return qr_id
